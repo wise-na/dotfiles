@@ -10,9 +10,6 @@ GITHUB_EMAIL="phillip@novess.com"
 source "${DOTFILES_PATH}/utils.sh"
 
 main() {
-  # Cloning Dotfiles repository for install_packages_with_brewfile
-  # to have access to Brewfile
-  clone_dotfiles_repo
 
   splash
 
@@ -21,6 +18,10 @@ main() {
 
   # Installing Homebrew, the basis of anything and everything
   install_homebrew
+
+  # Cloning Dotfiles repository for install_packages_with_brewfile
+  # to have access to Brewfile
+  clone_dotfiles_repo
 
   # Installing all packages in Dotfiles repository's Brewfile
   install_packages_with_brewfile
