@@ -13,7 +13,7 @@ main() {
   # Cloning Dotfiles repository for install_packages_with_brewfile
   # to have access to Brewfile
   clone_dotfiles_repo
-  bash "${DOTFILES_PATH}/install.sh"
+  # bash "${DOTFILES_PATH}/install.sh"
 }
 
 clone_dotfiles_repo() {
