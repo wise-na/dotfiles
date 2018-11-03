@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
+DOTFILES_PATH=$HOME/.dotfiles
+GITHUB_REPO=https://github.com/bluengreen/dotfiles.git
+GITHUB_NAME="Phillip Novess"
+GITHUB_USERNAME="bluengreen"
+GITHUB_EMAIL="phillip@novess.com"
+
 # source $HOME/Library/init/utils.sh
-source utils.sh
+source $DOTFILES_PATH/utils.sh
 
 main() {
   # First things first, asking for sudo credentials
@@ -35,12 +41,6 @@ main() {
   gem_install "${gem_packages[@]}"
 
 }
-
-DOTFILES_PATH=$HOME/.dotfiles
-GITHUB_REPO=https://github.com/bluengreen/dotfiles.git
-GITHUB_NAME="Phillip Novess"
-GITHUB_USERNAME="bluengreen"
-GITHUB_EMAIL="phillip@novess.com"
 
 ssh_key_gen() {
   e_header "Generating SSH key"
