@@ -6,13 +6,11 @@ GITHUB_NAME="Phillip Novess"
 GITHUB_USERNAME="bluengreen"
 GITHUB_EMAIL="phillip@novess.com"
 
-# source $HOME/Library/init/utils.sh
-# source "${DOTFILES_PATH}/utils.sh"
+source "${DOTFILES_PATH}/utils.sh"
 
 main() {
   # Cloning Dotfiles repository for install_packages_with_brewfile
   # to have access to Brewfile
-  clone_dotfiles_repo
   bash "${DOTFILES_PATH}/main.sh"
 }
 

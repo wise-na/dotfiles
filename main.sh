@@ -12,7 +12,7 @@ source "${DOTFILES_PATH}/utils.sh"
 main() {
   # Cloning Dotfiles repository for install_packages_with_brewfile
   # to have access to Brewfile
-  clone_dotfiles_repo
+  # clone_dotfiles_repo
 
   splash
 
@@ -38,7 +38,7 @@ main() {
   # yarn_packages=(prettier)
   # yarn_install "${yarn_packages[@]}"
 
-  gem_packages=(bundler mysql2 pg)
+  gem_packages=(bundler mysql2 pg devise)
   gem_install "${gem_packages[@]}"
 
 }
@@ -195,6 +195,7 @@ gem_install() {
     e_header "install gem Packages"
 
     list="$(to_install "${packages_to_install[*]}" "$(gem list | awk '{print $1}')")"
+    echo $list
 
     if [[ "$list" ]]; then
         for item in ${list[@]}
