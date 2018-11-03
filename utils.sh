@@ -182,8 +182,8 @@ to_install() {
   if [[ "$1" == 1 ]]; then debug=1; shift; fi
 
   # Convert args to arrays, handling both space- and newline-separated lists.
-  read -ra desired < <(echo "$1" | tr '\n' ' ')
-  read -ra installed < <(echo "$2" | tr '\n' ' ')
+  # read -ra desired < <(echo "$1" | tr '\n' ' ')
+  # read -ra installed < <(echo "$2" | tr '\n' ' ')
 
   # Sort desired and installed arrays.
   unset i; while read -r; do desired_s[i++]=$REPLY; done < <(
