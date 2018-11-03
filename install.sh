@@ -13,107 +13,18 @@ main() {
   # Cloning Dotfiles repository for install_packages_with_brewfile
   # to have access to Brewfile
   clone_dotfiles_repo
-  
-  splash
-
-  # First things first, asking for sudo credentials
-  ask_for_sudo
-
-  # Installing Homebrew, the basis of anything and everything
-  install_homebrew
-
-  # Installing all packages in Dotfiles repository's Brewfile
-  install_packages_with_brewfile
-
-  # Configure and install apps and packages
-  ssh_key_gen
-  configure_git
-  set_mac_defaults
-
-  # install apps and packages
-  install_node
-
-  # Installing typescript so that YouCompleteMe can support it
-  # and prettier so that Neoformat can auto-format files
-  # yarn_packages=(prettier)
-  # yarn_install "${yarn_packages[@]}"
-
-  gem_packages=(bundler mysql2 pg)
-  gem_install "${gem_packages[@]}"
-
-}
-
-ssh_key_gen() {
-  e_header "Generating SSH key"
-  if [ -f "$HOME/.ssh/${GITHUB_USERNAME}_id_rsa" ]; then
-    e_arrow "Key already exists."
-  else
-    # add prompt for password maybe?
-    ssh-keygen -t rsa -N "" -C "$GITHUB_EMAIL" -f $HOME/.ssh/${GITHUB_USERNAME}_id_rsa
-
-    # Start agent in background
-    eval "$(ssh-agent -s)"
-
-    # # If OSX 10.12+
-    echo 'Host *
-     AddKeysToAgent yes
-     UseKeychain yes
-     IdentityFile $HOME/.ssh/${GITHUB_USERNAME}_id_rsa
-    ' >> $HOME/.ssh/config
-  fi
-}
-
-install_homebrew() {
-  e_header "Installing Homebrew..."
-  if type_exists 'brew'; then
-    success "Homebrew already exists."
-  else
-    url=https://raw.githubusercontent.com/Sajjadhosn/dotfiles/master/installers/homebrew_installer
-    if /usr/bin/ruby -e "$(curl -fsSL ${url})"; then
-      success "Homebrew installation succeeded."
-    else
-      error "Homebrew installation failed."
-      exit 1
-    fi
-  fi
-}
-
-
-install_packages_with_brewfile() {
-  e_header "Installing packages within ${DOTFILES_PATH}/Brewfile ..."
-  if brew bundle --file=$DOTFILES_PATH/Brewfile; then
-    success "Brewfile installation succeeded."
-  else
-    error "Brewfile installation failed."
-    exit 1
-  fi
-}
-
-configure_git() {
-  e_header "Configuring git..."
-  # configure git
-  if git config --global color.ui true && \
-     git config --global core.editor bbedit && \
-     git config --global color.branch auto && \
-     git config --global color.diff auto && \
-     git config --global color.status auto && \
-     git config --global user.email "$GITHUB_EMAIL" && \
-     git config --global user.name "$GITHUB_NAME"; then
-       success "git configuration succeeded."
-  else
-     error "git configuration failed."
-  fi
+  bash "${DOTFILES_PATH}/install.sh"
 }
 
 clone_dotfiles_repo() {
-  e_header "Cloning dotfiles repository into ${DOTFILES_PATH} ..."
+  echo "Cloning dotfiles repository into ${DOTFILES_PATH} ..."
 
   if test -e $DOTFILES_PATH; then
-    substep "${DOTFILES_PATH} already exists."
+    echo "${DOTFILES_PATH} already exists."
     pull_latest $DOTFILES_PATH
   else
     if git clone "$GITHUB_REPO" $DOTFILES_PATH; then
-      success "Cloned into ${DOTFILES_PATH}"
+      echo "Cloned into ${DOTFILES_PATH}"
     else
       error "Cloning into ${DOTFILES_PATH} failed."
       exit 1
@@ -131,79 +42,5 @@ pull_latest() {
   fi
 }
 
-
-set_mac_defaults() {
-  e_header "Updating macOS defaults..."
-
-  current_dir=$(pwd)
-  cd ${DOTFILES_PATH}/
-  if bash mac_defaults.sh; then
-    cd $current_dir
-    success "macOS defaults setup succeeded."
-  else
-    cd $current_dir
-    error "macOS defaults setup failed."
-    exit 1
-  fi
-}
-
-install_node() {
-    e_header "Installing node, npm, nvm ..."
-
-    if ! type_exists 'node'; then
-      # Install NODE
-      curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash
-
-      # install stable version of node
-      nvm install stable
-
-      # set default node version
-      nvm alias default stable
-
-      # update npm
-      npm install -g npm@latest
-      npm install -g organize-cli
-    else
-       e_arrow "Nothing to install. You've already got them all."
-    fi
-}
-
-yarn_install() {
-    packages_to_install=("$@")
-
-    for package_to_install in "${packages_to_install[@]}"
-    do
-        info "yarn global add ${package_to_install}"
-        if yarn global list | grep "$package_to_install" &> /dev/null; then
-            success "${package_to_install} already exists."
-        else
-            if yarn global add "$package_to_install"; then
-                success "Package ${package_to_install} installation succeeded."
-            else
-                error "Package ${package_to_install} installation failed."
-                exit 1
-            fi
-        fi
-    done
-
-}
-
-gem_install() {
-    packages_to_install=("$@")
-
-    echo 'gem: --no-rdoc --no-ri' >> $HOME/.gemrc
-    e_header "install gem Packages"
-
-    list="$(to_install "${packages_to_install[*]}" "$(gem list | awk '{print $1}')")"
-
-    if [[ "$list" ]]; then
-        for item in ${list[@]}
-        do
-            gem install $item
-        done
-    else
-        e_arrow "Nothing to install. You've already got them all."
-    fi
-}
 
 main "$@"
