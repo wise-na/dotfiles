@@ -12,6 +12,12 @@ configure_system() {
     # Disable Gatekeeper entirely to get rid of \
     # “Are you sure you want to open this application?” dialog
     sudo spctl --master-disable
+
+    # make the ~/Library directory visible
+    chflags nohidden $HOME/Library/
+
+    # make directories for our projects
+    mkdir -p $HOME/Projects/shared/
 }
 
 configure_finder() {
@@ -56,6 +62,16 @@ quit() {
     app=$1
     killall "$app" > /dev/null 2>&1
 }
+
+
+link_files(){
+  # cp /Volumes/pnovess/Library/Preferences/com.barebones.bbedit.plist ~/Library/Preferences/com.barebones.bbedit.plist
+  # cp -R /Volumes/pnovess/Library/BBEdit ~/Library/BBEdit
+  # cp -R /Volumes/pnovess/Library/Application\ Support/BBEdit/  ~/Library/Application\ Support/BBEdit/
+  
+}
+
+
 
 
 main "$@"

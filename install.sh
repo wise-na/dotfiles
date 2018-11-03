@@ -5,6 +5,7 @@ source utils.sh
 
 main() {
   # First things first, asking for sudo credentials
+
   ask_for_sudo
 
   # Installing Homebrew, the basis of anything and everything
@@ -35,12 +36,11 @@ main() {
 
 }
 
-DOTFILES_PATH=~/Projects/dotfiles-pull
+DOTFILES_PATH=$HOME/.dotfiles
 GITHUB_REPO=https://github.com/bluengreen/dotfiles.git
 GITHUB_NAME="Phillip Novess"
 GITHUB_USERNAME="bluengreen"
 GITHUB_EMAIL="phillip@novess.com"
-
 
 ssh_key_gen() {
   e_header "Generating SSH key"
@@ -204,6 +204,5 @@ gem_install() {
         e_arrow "Nothing to install. You've already got them all."
     fi
 }
-
 
 main "$@"

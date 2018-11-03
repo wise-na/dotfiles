@@ -11,18 +11,18 @@
 #
 
 # include functions
-. utils.sh
-
-# set mac defaults
-bash defaults.sh
-
-# make the ~/Library directory visible so we can move bbedit customizations into it
-chflags nohidden ~/Library/
-
-# make directories for our projects
-mkdir -p ~/Projects/shared/
-
-
+# . utils.sh
+#
+# # set mac defaults
+# bash defaults.sh
+#
+# # make the ~/Library directory visible so we can move bbedit customizations into it
+# chflags nohidden ~/Library/
+#
+# # make directories for our projects
+# mkdir -p ~/Projects/shared/
+#
+#
 
 ###################
 # create and edit .bash_profile for your environment
