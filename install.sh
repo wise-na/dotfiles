@@ -7,11 +7,13 @@ GITHUB_USERNAME="bluengreen"
 GITHUB_EMAIL="phillip@novess.com"
 
 # source $HOME/Library/init/utils.sh
-source $DOTFILES_PATH/utils.sh
+source "${DOTFILES_PATH}/utils.sh"
 
 main() {
-  # First things first, asking for sudo credentials
 
+  splash
+
+  # First things first, asking for sudo credentials
   ask_for_sudo
 
   # Installing Homebrew, the basis of anything and everything

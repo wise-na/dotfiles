@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-source utils.sh
-
 main() {
     # configure_plist_apps # Configure all apps whose configurations are plists
     configure_finder
