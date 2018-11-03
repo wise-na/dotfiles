@@ -58,7 +58,7 @@ ssh_key_gen() {
      AddKeysToAgent yes
      UseKeychain yes
      IdentityFile $HOME/.ssh/${GITHUB_USERNAME}_id_rsa
-    ' >> ~/.ssh/config
+    ' >> $HOME/.ssh/config
   fi
 }
 

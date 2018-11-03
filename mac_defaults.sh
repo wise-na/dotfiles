@@ -14,10 +14,10 @@ configure_system() {
     sudo spctl --master-disable
 
     # make the ~/Library directory visible
-    chflags nohidden $HOME/Library/
+    chflags nohidden "${HOME}/Library/"
 
     # make directories for our projects
-    mkdir -p $HOME/Projects/shared/
+    mkdir -p "${HOME}/Projects/shared/"
 }
 
 configure_finder() {
@@ -64,14 +64,11 @@ quit() {
 }
 
 
-link_files(){
-  # cp /Volumes/pnovess/Library/Preferences/com.barebones.bbedit.plist ~/Library/Preferences/com.barebones.bbedit.plist
-  # cp -R /Volumes/pnovess/Library/BBEdit ~/Library/BBEdit
-  # cp -R /Volumes/pnovess/Library/Application\ Support/BBEdit/  ~/Library/Application\ Support/BBEdit/
-  
-}
-
-
+# link_files(){
+#   # cp /Volumes/pnovess/Library/Preferences/com.barebones.bbedit.plist ~/Library/Preferences/com.barebones.bbedit.plist
+#   # cp -R /Volumes/pnovess/Library/BBEdit ~/Library/BBEdit
+#   # cp -R /Volumes/pnovess/Library/Application\ Support/BBEdit/  ~/Library/Application\ Support/BBEdit/
+# }
 
 
 main "$@"
