@@ -54,7 +54,6 @@ error() {
 
 ##################################################################
 
-
 #
 # Set Colors
 #
@@ -148,7 +147,6 @@ is_confirmed() {
 #   some other action
 # fi
 #
-
 type_exists() {
   if [ $(type -P $1) ]; then
     return 0
@@ -161,7 +159,6 @@ type_exists() {
 # $1 = OS to test
 # Usage: if is_os 'darwin'; then
 #
-
 is_os() {
   if [[ "${OSTYPE}" == $1* ]]; then
     return 0
@@ -178,22 +175,66 @@ is_os() {
 to_install() {
   local debug desired installed i desired_s installed_s remain
   if [[ "$1" == 1 ]]; then debug=1; shift; fi
-    # Convert args to arrays, handling both space- and newline-separated lists.
-    read -ra desired < <(echo "$1" | tr '\n' ' ')
-    read -ra installed < <(echo "$2" | tr '\n' ' ')
-    # Sort desired and installed arrays.
-    unset i; while read -r; do desired_s[i++]=$REPLY; done < <(
-      printf "%s\n" "${desired[@]}" | sort
-    )
-    unset i; while read -r; do installed_s[i++]=$REPLY; done < <(
-      printf "%s\n" "${installed[@]}" | sort
-    )
-    # Get the difference. comm is awesome.
-    unset i; while read -r; do remain[i++]=$REPLY; done < <(
-      comm -13 <(printf "%s\n" "${installed_s[@]}") <(printf "%s\n" "${desired_s[@]}")
+
+  # Convert args to arrays, handling both space- and newline-separated lists.
+  read -ra desired < <(echo "$1" | tr '\n' ' ')
+  read -ra installed < <(echo "$2" | tr '\n' ' ')
+
+  # Sort desired and installed arrays.
+  unset i; while read -r; do desired_s[i++]=$REPLY; done < <(
+    printf "%s\n" "${desired[@]}" | sort
   )
+
+  unset i; while read -r; do installed_s[i++]=$REPLY; done < <(
+    printf "%s\n" "${installed[@]}" | sort
+  )
+
+  # Get the difference. comm is awesome.
+  unset i; while read -r; do remain[i++]=$REPLY; done < <(
+    comm -13 <(printf "%s\n" "${installed_s[@]}") <(printf "%s\n" "${desired_s[@]}")
+  )
+
   [[ "$debug" ]] && for v in desired desired_s installed installed_s remain; do
     echo "$v ($(eval echo "\${#$v[*]}")) $(eval echo "\${$v[*]}")"
   done
   echo "${remain[@]}"
+}
+
+# <doc:truth> {{{
+#
+# Determine the "truthiness" of the given value.
+#
+# Usage examples:
+#     truth True   #==> true
+#     truth        #==> false
+#     truth 1      #==> true
+#     truth false  #==> false
+#     truth on     #==> true
+#     truth spam   #==> false
+#
+# </doc:truth> }}}
+truth()
+{
+    case $(lower <<<"$1") in
+        yes|y|true|t|on|1) return 0 ;;
+    esac
+    return 1
+}
+
+# <doc:truth_echo> {{{
+#
+# Depending on the "truthiness" of the given value, echo the first (true)
+# or second (false) value.
+#
+#  truth_echo "$1" 1 0
+#
+#
+# </doc:truth_echo> }}}
+truth_echo()
+{
+    if truth "$1"; then
+        [[ $2 ]] && echo "$2"
+    else
+        [[ $3 ]] && echo "$3"
+    fi
 }

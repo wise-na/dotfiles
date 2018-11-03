@@ -5,7 +5,7 @@ source utils.sh
 
 main() {
   # First things first, asking for sudo credentials
-  # ask_for_sudo
+  ask_for_sudo
 
   # Installing Homebrew, the basis of anything and everything
   install_homebrew
@@ -17,10 +17,13 @@ main() {
   # Installing all packages in Dotfiles repository's Brewfile
   install_packages_with_brewfile
 
-  # Configuring git config file
-  configure_git
-  install_node
+  # Configure and install apps and packages
   ssh_key_gen
+  configure_git
+  set_mac_defaults
+
+  # install apps and packages
+  install_node
 
   # Installing typescript so that YouCompleteMe can support it
   # and prettier so that Neoformat can auto-format files
@@ -30,8 +33,6 @@ main() {
   gem_packages=(bundler mysql2 pg)
   gem_install "${gem_packages[@]}"
 
-  # Setting up macOS defaults
-  setup_macOS_defaults
 }
 
 DOTFILES_PATH=~/Projects/dotfiles-pull
@@ -42,7 +43,10 @@ GITHUB_EMAIL="phillip@novess.com"
 
 
 ssh_key_gen() {
-  if [ ! -f "$HOME/.ssh/${GITHUB_USERNAME}_id_rsa" ]; then
+  e_header "Generating SSH key"
+  if [ -f "$HOME/.ssh/${GITHUB_USERNAME}_id_rsa" ]; then
+    e_arrow "Key already exists."
+  else
     # add prompt for password maybe?
     ssh-keygen -t rsa -N "" -C "$GITHUB_EMAIL" -f $HOME/.ssh/${GITHUB_USERNAME}_id_rsa
 
@@ -59,7 +63,7 @@ ssh_key_gen() {
 }
 
 install_homebrew() {
-  info "Installing Homebrew..."
+  e_header "Installing Homebrew..."
   if type_exists 'brew'; then
     success "Homebrew already exists."
   else
@@ -74,9 +78,8 @@ install_homebrew() {
 }
 
 
-
 install_packages_with_brewfile() {
-  info "Installing packages within ${DOTFILES_PATH}/Brewfile ..."
+  e_header "Installing packages within ${DOTFILES_PATH}/Brewfile ..."
   if brew bundle --file=$DOTFILES_PATH/Brewfile; then
     success "Brewfile installation succeeded."
   else
@@ -86,7 +89,7 @@ install_packages_with_brewfile() {
 }
 
 configure_git() {
-  info "Configuring git..."
+  e_header "Configuring git..."
   # configure git
   if git config --global color.ui true && \
      git config --global core.editor bbedit && \
@@ -118,7 +121,7 @@ clone_dotfiles_repo() {
 }
 
 pull_latest() {
-  info "Pulling latest changes in ${1} repository..."
+  e_header "Pulling latest changes in ${1} repository..."
 
   if git -C $1 pull origin master &> /dev/null; then
     success "Pull successful in ${1} repository."
@@ -128,12 +131,12 @@ pull_latest() {
 }
 
 
-setup_macOS_defaults() {
-  info "Updating macOS defaults..."
+set_mac_defaults() {
+  e_header "Updating macOS defaults..."
 
   current_dir=$(pwd)
   cd ${DOTFILES_PATH}/
-  if bash defaults.sh; then
+  if bash mac_defaults.sh; then
     cd $current_dir
     success "macOS defaults setup succeeded."
   else
@@ -143,21 +146,25 @@ setup_macOS_defaults() {
   fi
 }
 
-
 install_node() {
-    info "Installing node, npm, nvm ..."
-    # Install NODE
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash
+    e_header "Installing node, npm, nvm ..."
 
-    # install stable version of node
-    nvm install stable
+    if ! type_exists 'node'; then
+      # Install NODE
+      curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash
 
-    # set default node version
-    nvm alias default stable
+      # install stable version of node
+      nvm install stable
 
-    # update npm
-    npm install -g npm@latest
-    npm install -g organize-cli
+      # set default node version
+      nvm alias default stable
+
+      # update npm
+      npm install -g npm@latest
+      npm install -g organize-cli
+    else
+       e_arrow "Nothing to install. You've already got them all."
+    fi
 }
 
 yarn_install() {
@@ -181,23 +188,21 @@ yarn_install() {
 }
 
 gem_install() {
-    echo 'gem: --no-rdoc --no-ri' >> ~/.gemrc
     packages_to_install=("$@")
 
-    for package_to_install in "${packages_to_install[@]}"
-    do
-        info "gem install ${package_to_install}"
-        if gem list "$package_to_install" --quiet; then
-            success "${package_to_install} already exists."
-        else
-            if gem install "$package_to_install"; then
-                success "Package ${package_to_install} installation succeeded."
-            else
-                error "Package ${package_to_install} installation failed."
-                exit 1
-            fi
-        fi
-    done
+    echo 'gem: --no-rdoc --no-ri' >> $HOME/.gemrc
+    e_header "install gem Packages"
+
+    list="$(to_install "${packages_to_install[*]}" "$(gem list | awk '{print $1}')")"
+
+    if [[ "$list" ]]; then
+        for item in ${list[@]}
+        do
+            gem install $item
+        done
+    else
+        e_arrow "Nothing to install. You've already got them all."
+    fi
 }
 
 

@@ -141,30 +141,4 @@ end tell
 EOM
 }
 
-
-function update_login_items() {
-    info "Updating login items..."
-    login_item /Applications/iTerm.app
-    success "Login items successfully updated."
-}
-
-function login_item() {
-    path=$1
-    hidden=${2:-false}
-    name=$(basename "$path")
-
-    # "¬" charachter tells osascript that the line continues
-    if osascript &> /dev/null << EOM
-tell application "System Events" to make login item with properties ¬
-{name: "$name", path: "$path", hidden: "$hidden"}
-EOM
-then
-    success "Login item ${name} successfully added."
-else
-    error "Adding login item ${name} failed."
-    exit 1
-fi
-}
-
-
 main "$@"
