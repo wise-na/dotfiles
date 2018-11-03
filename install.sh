@@ -30,12 +30,12 @@ clone_dotfiles_repo() {
 }
 
 pull_latest() {
-  e_header "Pulling latest changes in ${1} repository..."
+  echo "Pulling latest changes in ${1} repository..."
 
   if git -C $1 pull origin master &> /dev/null; then
-    success "Pull successful in ${1} repository."
+    echo "Pull successful in ${1} repository."
   else
-    error "Please pull the latest changes in ${1} repository manually."
+    echo "Please pull the latest changes in ${1} repository manually."
   fi
 }
 
