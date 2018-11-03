@@ -7,14 +7,13 @@ ssh-keygen -t rsa -N "" -C "<your_email_username>@yourdomain.com" -f ~/.ssh/test
 # Start agent in background
 eval "$(ssh-agent -s)"
 
-#
 # # If OSX 10.12+
-# echo 'Host *
-#  AddKeysToAgent yes
-#  UseKeychain yes
-#  IdentityFile ~/.ssh/test_id_rsa
-# ' >> ~/.ssh/config
-#
+echo 'Host *
+ AddKeysToAgent yes
+ UseKeychain yes
+ IdentityFile ~/.ssh/id_rsa
+' >> ~/.ssh/config
+
 # # Add to local keys
 # ssh-add -K ~/.ssh/test_id_rsa
 #

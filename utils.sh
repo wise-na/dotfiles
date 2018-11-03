@@ -1,54 +1,54 @@
 #!/bin/bash
 
-function ask_for_sudo() {
-    info "Prompting for sudo password..."
-    if sudo --validate; then
-        # Keep-alive
-        while true; do sudo --non-interactive true; \
-            sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-        success "Sudo credentials updated."
-    else
-        error "Obtaining sudo credentials failed."
-        exit 1
-    fi
+ask_for_sudo() {
+  info "Prompting for sudo password..."
+  if sudo --validate; then
+    # Keep-alive
+    while true; do sudo --non-interactive true; \
+        sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+    success "Sudo credentials updated."
+  else
+    error "Obtaining sudo credentials failed."
+    exit 1
+  fi
 }
 
-function coloredEcho() {
-    local exp="$1";
-    local color="$2";
-    local arrow="$3";
-    if ! [[ $color =~ '^[0-9]$' ]] ; then
-       case $(echo $color | tr '[:upper:]' '[:lower:]') in
-        black) color=0 ;;
-        red) color=1 ;;
-        green) color=2 ;;
-        yellow) color=3 ;;
-        blue) color=4 ;;
-        magenta) color=5 ;;
-        cyan) color=6 ;;
-        white|*) color=7 ;; # white or invalid color
-       esac
-    fi
-    tput bold;
-    tput setaf "$color";
-    echo "$arrow $exp";
-    tput sgr0;
+coloredEcho() {
+  local exp="$1";
+  local color="$2";
+  local arrow="$3";
+  if ! [[ $color =~ '^[0-9]$' ]] ; then
+     case $(echo $color | tr '[:upper:]' '[:lower:]') in
+      black) color=0 ;;
+      red) color=1 ;;
+      green) color=2 ;;
+      yellow) color=3 ;;
+      blue) color=4 ;;
+      magenta) color=5 ;;
+      cyan) color=6 ;;
+      white|*) color=7 ;; # white or invalid color
+     esac
+  fi
+  tput bold;
+  tput setaf "$color";
+  echo "$arrow $exp";
+  tput sgr0;
 }
 
-function info() {
-    coloredEcho "$1" blue "========>"
+info() {
+  coloredEcho "$1" blue "========>"
 }
 
-function substep() {
-    coloredEcho "$1" magenta "===="
+substep() {
+  coloredEcho "$1" magenta "===="
 }
 
-function success() {
-    coloredEcho "$1" green "========>"
+success() {
+  coloredEcho "$1" green "========>"
 }
 
-function error() {
-    coloredEcho "$1" red "========>"
+error() {
+  coloredEcho "$1" red "========>"
 }
 
 
@@ -73,21 +73,36 @@ blue=$(tput setaf 38)
 # Headers and  Logging
 #
 
-e_header() { printf "\n${bold}${purple}==========  %s  ==========${reset}\n" "$@"
+e_header() {
+  printf "\n${bold}${purple}==========  %s  ==========${reset}\n" "$@"
 }
-e_arrow() { printf "➜ $@\n"
+
+e_arrow() {
+  printf "➜ $@\n"
 }
-e_success() { printf "${green}✔ %s${reset}\n" "$@"
+
+e_success() {
+  printf "${green}✔ %s${reset}\n" "$@"
 }
-e_error() { printf "${red}✖ %s${reset}\n" "$@"
+
+e_error() {
+  printf "${red}✖ %s${reset}\n" "$@"
 }
-e_warning() { printf "${tan}➜ %s${reset}\n" "$@"
+
+e_warning() {
+  printf "${tan}➜ %s${reset}\n" "$@"
 }
-e_underline() { printf "${underline}${bold}%s${reset}\n" "$@"
+
+e_underline() {
+  printf "${underline}${bold}%s${reset}\n" "$@"
 }
-e_bold() { printf "${bold}%s${reset}\n" "$@"
+
+e_bold() {
+  printf "${bold}%s${reset}\n" "$@"
 }
-e_note() { printf "${underline}${bold}${blue}Note:${reset}  ${blue}%s${reset}\n" "$@"
+
+e_note() {
+  printf "${underline}${bold}${blue}Note:${reset}  ${blue}%s${reset}\n" "$@"
 }
 
 #
@@ -117,10 +132,10 @@ seek_confirmation_head() {
 
 # Test whether the result of an 'ask' is a confirmation
 is_confirmed() {
-if [[ "$REPLY" =~ ^[Yy]$ ]]; then
-  return 0
-fi
-return 1
+  if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+    return 0
+  fi
+  return 1
 }
 
 #
@@ -135,10 +150,10 @@ return 1
 #
 
 type_exists() {
-if [ $(type -P $1) ]; then
-  return 0
-fi
-return 1
+  if [ $(type -P $1) ]; then
+    return 0
+  fi
+  return 1
 }
 
 #
@@ -148,34 +163,10 @@ return 1
 #
 
 is_os() {
-if [[ "${OSTYPE}" == $1* ]]; then
-  return 0
-fi
-return 1
-}
-
-#
-# Pushover Notifications
-# Usage: pushover "Title Goes Here" "Message Goes Here"
-# Credit: http://ryonsherman.blogspot.com/2012/10/shell-script-to-send-pushover.html
-#
-
-pushover () {
-    PUSHOVERURL="https://api.pushover.net/1/messages.json"
-  API_KEY="your-api-here"
-  USER_KEY="your-user-key-here"
-    DEVICE=""
-
-    TITLE="${1}"
-    MESSAGE="${2}"
-
-    curl \
-    -F "token=${API_KEY}" \
-    -F "user=${USER_KEY}" \
-    -F "device=${DEVICE}" \
-    -F "title=${TITLE}" \
-    -F "message=${MESSAGE}" \
-    "${PUSHOVERURL}" > /dev/null 2>&1
+  if [[ "${OSTYPE}" == $1* ]]; then
+    return 0
+  fi
+  return 1
 }
 
 #
@@ -184,7 +175,7 @@ pushover () {
 # Credit: https://github.com/cowboy/dotfiles
 #
 
-function to_install() {
+to_install() {
   local debug desired installed i desired_s installed_s remain
   if [[ "$1" == 1 ]]; then debug=1; shift; fi
     # Convert args to arrays, handling both space- and newline-separated lists.
