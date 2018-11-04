@@ -13,9 +13,8 @@ main() {
   # Cloning Dotfiles repository for install_packages_with_brewfile
   # to have access to Brewfile
   # clone_dotfiles_repo
-
-  splash
-
+  # splash
+  
   # First things first, asking for sudo credentials
   ask_for_sudo
 
@@ -62,22 +61,6 @@ ssh_key_gen() {
     ' >> $HOME/.ssh/config
   fi
 }
-
-install_homebrew() {
-  e_header "Installing Homebrew..."
-  if type_exists 'brew'; then
-    success "Homebrew already exists."
-  else
-    url=https://raw.githubusercontent.com/Sajjadhosn/dotfiles/master/installers/homebrew_installer
-    if /usr/bin/ruby -e "$(curl -fsSL ${url})"; then
-      success "Homebrew installation succeeded."
-    else
-      error "Homebrew installation failed."
-      exit 1
-    fi
-  fi
-}
-
 
 install_packages_with_brewfile() {
   e_header "Installing packages within ${DOTFILES_PATH}/Brewfile ..."

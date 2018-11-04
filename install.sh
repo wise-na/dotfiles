@@ -7,10 +7,27 @@ GITHUB_USERNAME="bluengreen"
 GITHUB_EMAIL="phillip@novess.com"
 
 main() {
+  splash
   # Cloning Dotfiles repository for install_packages_with_brewfile
   # to have access to Brewfile
-  clone_dotfiles_repo
-  bash "${DOTFILES_PATH}/main.sh"
+  if clone_dotfiles_repo
+    bash "${DOTFILES_PATH}/main.sh"
+  fi
+}
+
+install_homebrew() {
+  e_header "Installing Homebrew..."
+  if type_exists 'brew'; then
+    success "Homebrew already exists."
+  else
+    url=https://raw.githubusercontent.com/Sajjadhosn/dotfiles/master/installers/homebrew_installer
+    if /usr/bin/ruby -e "$(curl -fsSL ${url})"; then
+      success "Homebrew installation succeeded."
+    else
+      error "Homebrew installation failed."
+      exit 1
+    fi
+  fi
 }
 
 clone_dotfiles_repo() {
@@ -39,5 +56,31 @@ pull_latest() {
   fi
 }
 
+
+
+splash() {
+cat << "EOF"
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                                                                              │
+│                        ______ _____   _______ _______                        │██
+│                       |   __ \     |_|   |   |    ___|                       │██
+│                       |   __ <       |   |   |    ___|                       │██
+│                       |______/_______|_______|_______|                       │██
+│                                                                              │██
+│                                    _______                                   │██
+│                                   |    |  |                                  │██
+│                                   |       |                                  │██
+│                                   |__|____|                                  │██
+│                                                                              │██
+│                    _______ ______ _______ _______ _______                    │██
+│                   |     __|   __ \    ___|    ___|    |  |                   │██
+│                   |    |  |      <    ___|    ___|       |                   │██
+│                   |_______|___|__|_______|_______|__|____|                   │██
+│                                                                              │██
+└──────────────────────────────────────────────────────────────────────────────┘██
+  ████████████████████████████████████████████████████████████████████████████████
+  ████████████████████████████████████████████████████████████████████████████████
+EOF
+}
 
 main "$@"
