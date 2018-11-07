@@ -83,3 +83,4 @@ cask 'qlvideo'
 mas 'Affinity Designer', id: 824171161
 mas 'Magnet', id: 441258766
 mas 'SnippetsLab', id: 1006087419
+mas 'Reeder', id: 880001334
