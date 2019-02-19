@@ -14,7 +14,7 @@ main() {
   # to have access to Brewfile
   # clone_dotfiles_repo
   # splash
-  
+
   # First things first, asking for sudo credentials
   ask_for_sudo
 
@@ -29,9 +29,12 @@ main() {
   configure_git
   set_mac_defaults
 
+  # install rvm & ruby
+  install_rvm
+
   # install apps and packages
   install_node
-
+	
   # Installing typescript so that YouCompleteMe can support it
   # and prettier so that Neoformat can auto-format files
   # yarn_packages=(prettier)
@@ -39,6 +42,8 @@ main() {
 
   gem_packages=(bundler mysql2 pg devise)
   gem_install "${gem_packages[@]}"
+  
+  bash_profile_install
 
 }
 
@@ -130,13 +135,35 @@ set_mac_defaults() {
   fi
 }
 
+install_rvm() {
+    e_header "Installing rvm ..."
+
+    if ! type_exists 'rvm'; then
+      # install gpg
+      gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+
+      # Install NODE
+      curl -sSL https://get.rvm.io | bash
+
+      source ~/.rvm/scripts/rvm
+      source ~/.bash_profile             
+    else
+       e_arrow "Nothing to install. You've already got them all."
+    fi
+    
+    # install stable version of node
+    rvm install 2.3.2 --default 
+}
+
 install_node() {
     e_header "Installing node, npm, nvm ..."
 
     if ! type_exists 'node'; then
       # Install NODE
       curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash
-
+	  
+	  source ~/.bashrc
+	  
       # install stable version of node
       nvm install stable
 
@@ -188,6 +215,17 @@ gem_install() {
     else
         e_arrow "Nothing to install. You've already got them all."
     fi
+}
+
+bash_profile_install() {
+	e_header "Update bash_profile..."
+	cat ~/.dotfiles/bash_profile.sh > ~/.bash_profile
+	
+	source ~/.bash_profile
+	
+	success "bash_profile installation succeeded."
+	
+	
 }
 
 main "$@"

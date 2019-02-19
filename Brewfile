@@ -41,7 +41,9 @@ brew 'zookeeper'
 # media libs and tools
 brew 'ghostscript'
 brew 'imagemagick'
-brew "ffmpeg", args: ["with-fdk-aac", "with-ffplay", "with-freetype", "with-libass", "with-libquvi", "with-libvorbis", "with-libvpx", "with-opus", "with-x265", "with-openh264"]
+brew 'fdk-aac'
+# brew "ffmpeg", args: ["build-from-source", "with-fdk-aac", "with-ffplay", "with-freetype", "with-libass", "with-libquvi", "with-libvorbis", "with-libvpx", "with-opus", "with-x265", "with-openh264"]
+brew "ffmpeg"
 brew 'media-info'
 brew 'youtube-dl'
 

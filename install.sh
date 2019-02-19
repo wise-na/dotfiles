@@ -10,7 +10,7 @@ main() {
   splash
   # Cloning Dotfiles repository for install_packages_with_brewfile
   # to have access to Brewfile
-  if clone_dotfiles_repo
+  if clone_dotfiles_repo; then 
     bash "${DOTFILES_PATH}/main.sh"
   fi
 }
