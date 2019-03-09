@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
 DOTFILES_PATH=$HOME/.dotfiles
-GITHUB_REPO=https://github.com/bluengreen/dotfiles.git
-GITHUB_NAME="Phillip Novess"
-GITHUB_USERNAME="bluengreen"
-GITHUB_EMAIL="phillip@novess.com"
+GITHUB_REPO=https://github.com/wise-na/dotfiles.git
+GITHUB_NAME="Nick Wise"
+GITHUB_USERNAME="wise-na"
+GITHUB_EMAIL="nwise225@gmail.com"
 
 main() {
   splash
   # Cloning Dotfiles repository for install_packages_with_brewfile
   # to have access to Brewfile
-  if clone_dotfiles_repo; then 
+  if clone_dotfiles_repo; then
     bash "${DOTFILES_PATH}/main.sh"
   fi
 }
